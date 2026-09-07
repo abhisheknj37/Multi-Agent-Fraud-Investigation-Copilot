@@ -1,10 +1,10 @@
 services:
   - type: web
     name: fraudguard
-    runtime: docker
+    runtime: python
     plan: free
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
     envVars:
       - key: DATABASE_URL
