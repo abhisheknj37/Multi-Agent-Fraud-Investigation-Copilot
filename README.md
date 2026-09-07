@@ -69,6 +69,28 @@ After deployment, Render provides a URL similar to:
 pip install pytest httpx
 pytest -q
 ```
+## 👥 Team Members
+
+| Name                 | Role                            | GitHub                                                 |
+| -------------------- | ------------------------------- | ------------------------------------------------------ |
+| **Adarsh B H**       | Team Lead / Frontend Developer  | [@AdarshBH23](https://github.com/AdarshBH23)           |
+| **Abhishek N J**     | Full-Stack Developer            | [@abhisheknj](https://github.com/abhisheknj)           |
+| **Abubakkar Siddiq** | Multi-Tasker Developer          | [@abubakkar734902](https://github.com/abubakkar734902) |
+| **Akshata**          | Presenter / Project Coordinator | [@Akshatah3824](https://github.com/Akshatah3824)       |
+
+### 🏆 Hackathon Team
+
+We are a team of four developers who collaboratively designed, developed, tested, and deployed **AI Financial Crime Sentinel** for the hackathon.
+
+### 🤝 Contributions
+
+* **Adarsh B H** — Frontend development, UI/UX, team coordination
+* **Abhishek N J** — Full-stack development, backend integration, database
+* **Abubakkar Siddiq** — Feature development, testing, integration
+* **Akshata** — Project presentation, documentation, coordination
+
+All team members contributed to the development and successful completion of the project.
+
 
 ## Extra sample data
 ```bash
