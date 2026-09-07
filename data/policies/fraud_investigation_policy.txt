@@ -1,0 +1,8 @@
+FRAUD INVESTIGATION DEMO POLICY
+
+1. High-risk cases must be reviewed by a human analyst.
+2. Risk explanations should reference observable evidence.
+3. Analysts may clear, confirm, or escalate a case.
+4. The investigation record should retain an audit trail.
+5. A risk score is decision support and is not by itself proof of fraud.
+6. Analysts should review customer history and transaction context before taking action.

@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fraud Investigation Copilot</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f4f6fb;color:#18202b}
+header{height:64px;background:#111827;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.brand{font-weight:800;font-size:18px}.badge{font-size:12px;background:#374151;padding:6px 10px;border-radius:20px}
+.layout{display:flex;min-height:calc(100vh - 64px)}nav{width:225px;background:#fff;border-right:1px solid #e5e7eb;padding:15px}
+nav button{width:100%;border:0;background:white;text-align:left;padding:12px;border-radius:8px;margin:3px 0;cursor:pointer}
+nav button.active,nav button:hover{background:#eef2ff}
+main{flex:1;padding:24px;overflow:auto}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;box-shadow:0 2px 7px #00000008}.num{font-size:26px;font-weight:800;margin-top:8px}
+.toolbar{display:flex;gap:10px;margin:15px 0;flex-wrap:wrap}input,select,textarea{padding:10px;border:1px solid #d1d5db;border-radius:8px}input{min-width:260px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden}th,td{padding:11px;border-bottom:1px solid #eee;text-align:left;font-size:13px}th{background:#f9fafb}
+button.primary{background:#4f46e5;color:#fff;border:0;padding:10px 14px;border-radius:8px;cursor:pointer}button.danger{background:#dc2626;color:#fff;border:0;padding:10px 14px;border-radius:8px}button.ok{background:#059669;color:#fff;border:0;padding:10px 14px;border-radius:8px}
+.risk-high{color:#b91c1c;font-weight:800}.risk-medium{color:#b45309;font-weight:800}.risk-low{color:#047857;font-weight:800}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{padding:6px 9px;background:#eef2ff;border-radius:15px;font-size:12px}
+.agent{border-left:4px solid #6366f1;padding:12px;background:#fafaff;margin:8px 0;border-radius:8px}.evidence{padding:12px;border:1px solid #eee;border-radius:8px;margin:8px 0;background:#fff}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:20px}.modalbox{background:#fff;max-width:1000px;width:100%;max-height:92vh;overflow:auto;border-radius:14px;padding:22px}
+canvas{max-width:100%;height:230px}.muted{color:#6b7280}.row{display:flex;gap:12px;align-items:center;justify-content:space-between}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}nav{width:170px}}@media(max-width:600px){.layout{display:block}nav{width:100%;display:flex;overflow:auto}nav button{min-width:120px}.grid{grid-template-columns:1fr 1fr}main{padding:12px}}
+</style>
+</head>
+<body>
+<header><div class="brand">🛡️ Multi-Agent Fraud Investigation Copilot</div><div class="badge">Human-in-the-loop • Demo</div></header>
+<div class="layout">
+<nav>
+<button class="active" onclick="show('dashboard',this)">📊 Dashboard</button>
+<button onclick="show('transactions',this)">💳 Transactions</button>
+<button onclick="show('cases',this)">📁 Cases</button>
+<button onclick="show('alerts',this)">🚨 Alerts</button>
+<button onclick="show('audit',this)">🧾 Audit Log</button>
+<button onclick="show('network',this)">🕸️ Network</button>
+<button onclick="show('chat',this)">💬 AI Copilot</button>
+</nav>
+<main id="app"></main>
+</div>
+<div class="modal" id="modal"><div class="modalbox" id="modalbox"></div></div>
+<script>
+const app=document.getElementById('app');
+const api=async(u,o={})=>{let r=await fetch(u,o); if(!r.ok) throw new Error(await r.text()); return r.json()};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function risk(x){return `<span class="risk-${x>=75?'high':x>=50?'medium':'low'}">${x>=75?'HIGH':x>=50?'MEDIUM':'LOW'} (${x}%)</span>`}
+async function show(page,btn){
+ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active')); if(btn)btn.classList.add('active');
+ if(page==='dashboard')return dashboard(); if(page==='transactions')return transactions(); if(page==='cases')return cases();
+ if(page==='alerts')return alerts(); if(page==='audit')return audit(); if(page==='network')return network(); if(page==='chat')return chat();
+}
+async function dashboard(){
+ let d=await api('/api/dashboard');
+ app.innerHTML=`<h1>Fraud Dashboard</h1><p class="muted">Real-time demo investigation overview</p>
+ <div class="grid">${[['Total Transactions',d.kpis.total],['Suspicious',d.kpis.suspicious],['High Risk',d.kpis.high_risk],['Under Review',d.kpis.under_review],['Confirmed Fraud',d.kpis.confirmed_fraud]].map(x=>`<div class="card"><div class="muted">${x[0]}</div><div class="num">${x[1]}</div></div>`).join('')}</div>
+ <div class="card" style="margin-top:15px"><div class="row"><h2>Risk Distribution</h2><button class="primary" onclick="downloadCSV()">Export CSV</button></div><div class="chips">${d.risk_distribution.map(x=>`<span class="chip">${x.risk}: ${x.count}</span>`).join('')}</div></div>
+ <div class="grid" style="margin-top:15px"><div class="card"><h3>High-risk locations</h3>${d.risk_locations.map(x=>`<p>${esc(x.location)} <b>${x.count}</b></p>`).join('')}</div><div class="card"><h3>High-risk merchants</h3>${d.risk_merchants.map(x=>`<p>${esc(x.merchant_category)} <b>${x.count}</b></p>`).join('')}</div></div>`;
+}
+async function transactions(){
+ app.innerHTML=`<h1>Transactions</h1><div class="toolbar"><input id="q" placeholder="Search ID, customer, name, merchant"><select id="risk"><option value="all">All risk</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select><button class="primary" onclick="loadTx()">Search</button></div><div id="tx"></div>`; loadTx();
+}
+async function loadTx(){
+ let rows=await api('/api/transactions?q='+encodeURIComponent(document.getElementById('q').value)+'&risk='+document.getElementById('risk').value);
+ document.getElementById('tx').innerHTML=`<table><tr><th>ID</th><th>Customer</th><th>Amount</th><th>Location</th><th>Merchant</th><th>Risk</th><th></th></tr>${rows.map(t=>`<tr><td>${t.id}</td><td>${esc(t.customer_name)}</td><td>₹${Number(t.amount).toLocaleString()}</td><td>${esc(t.location)}</td><td>${esc(t.merchant_category)}</td><td>${risk(t.risk_score)}</td><td><button class="primary" onclick="investigate('${t.id}')">Investigate</button></td></tr>`).join('')}</table>`;
+}
+async function investigate(id){
+ let r=await api('/api/investigate/'+id);
+ document.getElementById('modal').style.display='flex';
+ document.getElementById('modalbox').innerHTML=`<div class="row"><h2>Investigation ${r.case_id}</h2><button onclick="closeModal()">✕</button></div>
+ <div class="card"><b>${esc(r.transaction.customer_name)}</b> • ${r.transaction.id} • ₹${Number(r.transaction.amount).toLocaleString()}<br><br>Risk: ${risk(r.risk_score)} &nbsp; Confidence: <b>${r.confidence}%</b><br>Recommendation: <b>${esc(r.recommendation)}</b></div>
+ <h3>Agent Trace</h3><div class="agent">🤖 Transaction-Pattern Agent — completed<br><small>Checks amount, velocity, geography, merchant and time.</small></div>
+ <div class="agent">👤 Customer-History Agent — completed<br><small>Checks baseline, disputes, prior flags and account history.</small></div>
+ <div class="agent">🧠 Risk-Scoring Agent — completed<br><small>Weighted evidence score: ${r.risk_score}%</small></div>
+ <h3>Evidence Trail</h3>${r.evidence.map(e=>`<div class="evidence"><b>${esc(e.category)}</b> — ${esc(e.severity)}<br>${esc(e.explanation)}</div>`).join('')}
+ <div class="toolbar"><button class="ok" onclick="decision('${r.case_id}','approve')">Approve / Clear</button><button class="danger" onclick="decision('${r.case_id}','reject')">Confirm Fraud</button><button class="primary" onclick="decision('${r.case_id}','escalate')">Escalate</button><a class="primary" style="text-decoration:none" href="/api/reports/${id}.pdf">PDF Report</a></div>`;
+}
+function closeModal(){document.getElementById('modal').style.display='none'}
+async function decision(id,d){let note=prompt('Analyst note (optional):')||'';await api('/api/cases/'+id+'/decision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({decision:d,note})});alert('Decision saved');closeModal();cases();}
+async function cases(){let rows=await api('/api/cases');app.innerHTML=`<h1>Investigation Cases</h1><table><tr><th>Case</th><th>Transaction</th><th>Status</th><th>Analyst</th><th>Updated</th></tr>${rows.map(c=>`<tr><td>${c.id}</td><td>${c.transaction_id}</td><td>${esc(c.status)}</td><td>${esc(c.assigned_analyst)}</td><td>${c.updated_at}</td></tr>`).join('')}</table>`}
+async function alerts(){let rows=await api('/api/alerts');app.innerHTML=`<h1>Alert Center</h1>${rows.map(a=>`<div class="card" style="margin:8px 0"><b>🚨 ${a.type}</b><br>Transaction ${a.transaction_id} • Customer ${a.customer_id}<br>₹${Number(a.amount).toLocaleString()} • ${risk(a.risk_score)} • ${a.location}</div>`).join('')}`}
+async function audit(){let rows=await api('/api/audit');app.innerHTML=`<h1>Audit Log</h1><table><tr><th>Time</th><th>Action</th><th>Entity</th><th>Details</th></tr>${rows.map(a=>`<tr><td>${a.created_at}</td><td>${a.action}</td><td>${a.entity_id}</td><td><code>${esc(a.details)}</code></td></tr>`).join('')}</table>`}
+async function network(){app.innerHTML=`<h1>Customer Network</h1><p class="muted">Enter a customer ID to view linked devices, IPs, merchants and locations.</p><div class="toolbar"><input id="cid" value="C101"><button class="primary" onclick="loadNetwork()">Build Network</button></div><div id="net"></div>`}
+async function loadNetwork(){let d=await api('/api/network/'+document.getElementById('cid').value);document.getElementById('net').innerHTML=`<div class="card"><h3>${d.nodes.length} nodes • ${d.edges.length} relationships</h3>${d.nodes.map(n=>`<span class="chip">${esc(n.type)}: ${esc(n.label)}</span>`).join(' ')}</div>`}
+async function chat(){app.innerHTML=`<h1>AI Fraud Copilot</h1><div class="card"><p>Ask about a transaction's risk or evidence.</p><input id="chatid" value="TXN1003" placeholder="Transaction ID"><textarea id="msg" style="width:100%;margin-top:10px" rows="3">Why is this transaction high risk?</textarea><button class="primary" style="margin-top:10px" onclick="ask()">Ask Copilot</button><div id="ans" style="margin-top:15px"></div></div>`}
+async function ask(){let r=await api('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:document.getElementById('msg').value,transaction_id:document.getElementById('chatid').value})});document.getElementById('ans').innerHTML=`<div class="evidence"><b>Copilot:</b><br>${esc(r.answer)}</div>`}
+function downloadCSV(){location.href='/api/export/transactions.csv'}
+show('dashboard');
+</script>
+</body></html>

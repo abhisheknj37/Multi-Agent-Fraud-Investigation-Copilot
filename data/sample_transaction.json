@@ -1,0 +1,8 @@
+{
+  "id": "TXN-DEMO-001",
+  "customer_id": "C101",
+  "amount": 85000,
+  "location": "Delhi",
+  "merchant_category": "Electronics",
+  "payment_method": "UPI"
+}

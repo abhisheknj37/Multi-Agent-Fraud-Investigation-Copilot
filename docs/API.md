@@ -1,0 +1,29 @@
+# Main API endpoints
+
+POST /api/login
+GET /api/dashboard
+GET /api/transactions
+GET /api/transactions/{transaction_id}
+POST /api/investigate/{transaction_id}
+GET /api/workflow/{transaction_id}
+GET /api/transactions/{transaction_id}/timeline
+GET /api/cases
+POST /api/cases/{case_id}/decision
+GET /api/alerts
+GET /api/audit
+GET /api/network/{customer_id}
+GET /api/fraud-rings
+GET /api/customers
+GET /api/customers/{customer_id}/activity
+GET /api/customers/{customer_id}/baseline
+GET /api/customers/{customer_id}/risk-evolution
+GET /api/merchants
+GET /api/reports
+GET /api/fund-flows/{customer_id}
+GET /api/network/risk-propagation
+GET /api/alerts/summary
+POST /api/demo-scenarios/{scenario}
+POST /api/chat
+GET /api/export/transactions.csv
+GET /api/reports/{transaction_id}.pdf
+GET /api/evidence-vault/{transaction_id}

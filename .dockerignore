@@ -1,0 +1,14 @@
+.git
+.gitignore
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+node_modules
+frontend-react/dist
+data/reports
+data/fraud.db
+*.log
+.env
