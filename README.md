@@ -1,5 +1,10 @@
 # AI Financial Crime Sentinel
 
+<escape>🚀 Live Demo: https://financial-crime-sentinel.onrender.com</escape>  
+<escape>📘 API Documentation: https://financial-crime-sentinel.onrender.com/docs</escape>
+
+> Demo deployment on Render free tier. Data may reset after service restarts; use synthetic/demo records only.
+
 A hackathon-ready fraud investigation platform inspired by the original Multi-Agent Fraud Investigation Copilot, redesigned with a stronger investigation workflow.
 
 ## Highlights
